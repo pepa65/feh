@@ -967,6 +967,12 @@ zoom the image like the
 .Cm --bg-fill
 mode.
 .
+.It Cm --zoom-factor Ar float
+.
+When zooming in or out, the current zoom ratio gets multiplied or divided by
+.Ar float
+.Pq greater than 1, the default is 1.25
+.
 .El
 .
 .

@@ -77,6 +77,7 @@ void init_parse_options(int argc, char **argv)
 	opt.auto_reload = 1;
 #endif				/* HAVE_INOTIFY */
 	opt.use_conversion_cache = 1;
+	opt.zoom_factor = ZOOM_FACTOR;
 
 	feh_getopt_theme(argc, argv);
 
@@ -433,6 +434,7 @@ static void feh_parse_option_array(int argc, char **argv, int finalrun)
 #endif
 		{"class"         , 1, 0, 249},
 		{"no-conversion-cache", 0, 0, 250},
+		{"zoom-factor"   , 1, 0, 251},
 		{0, 0, 0, 0}
 	};
 	int optch = 0, cmdx = 0;
@@ -832,6 +834,14 @@ static void feh_parse_option_array(int argc, char **argv, int finalrun)
 			break;
 		case 250:
 			opt.use_conversion_cache = 0;
+			break;
+		case 251:
+			opt.zoom_factor = atof(optarg);
+			if (opt.zoom_factor <= 1) {
+				weprintf("The zoom-factor must be greater than 1 (default of %f used)",
+						ZOOM_FACTOR);
+				opt.zoom_factor = ZOOM_FACTOR;
+			}
 			break;
 		default:
 			break;
