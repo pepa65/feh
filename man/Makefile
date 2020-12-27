@@ -2,6 +2,8 @@ include ../config.mk
 
 SOURCES = ${shell echo *.pre}
 TARGETS = ${SOURCES:.pre=.1}
+ZOOMRATE := ${shell grep -o 'ZOOM_RATE.*' ../src/feh.h |sed 's/.* //'}
+ZOOMSLOWRATE := ${shell grep -o 'ZOOMSLOW_RATE.*' ../src/feh.h  |sed 's/.* //'}
 
 all: ${TARGETS}
 
@@ -14,6 +16,8 @@ all: ${TARGETS}
 	-e 's/\$$MAN_EXIF\$$/${MAN_EXIF}/' \
 	-e 's/\$$MAN_INOTIFY\$$/${MAN_INOTIFY}/' \
 	-e 's/\$$MAN_XINERAMA\$$/${MAN_XINERAMA}/' \
+	-e 's/\$$ZOOM_RATE\$$/${ZOOMRATE}/' \
+	-e 's/\$$ZOOMSLOW_RATE\$$/${ZOOMSLOWRATE}/' \
 	< ${@:.1=.pre} > $@
 
 clean:

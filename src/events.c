@@ -105,8 +105,10 @@ void init_buttonbindings(void)
 	feh_set_bb(EVENT_pan,         0, 1);
 	feh_set_bb(EVENT_zoom,        0, 2);
 	feh_set_bb(EVENT_toggle_menu, 0, 3);
-	feh_set_bb(EVENT_prev_img,    0, 4);
-	feh_set_bb(EVENT_next_img,    0, 5);
+	feh_set_bb(EVENT_zoom_out,    0, 4);
+	feh_set_bb(EVENT_zoom_in,     0, 5);
+	feh_set_bb(EVENT_zoomslow_out, 1, 4);
+	feh_set_bb(EVENT_zoomslow_in, 1, 5);
 	feh_set_bb(EVENT_blur,        4, 1);
 	feh_set_bb(EVENT_rotate,      4, 2);
 
@@ -255,7 +257,7 @@ static void feh_event_handle_ButtonPress(XEvent * ev)
 				- winwid->im_y) / winwid->old_zoom;
 
 		/* copied from zoom_in, keyevents.c */
-		winwid->zoom = winwid->zoom * opt.zoom_factor;
+		winwid->zoom = winwid->zoom * opt.zoom_rate;
 
 		if (winwid->zoom > ZOOM_MAX)
 			winwid->zoom = ZOOM_MAX;
@@ -283,7 +285,63 @@ static void feh_event_handle_ButtonPress(XEvent * ev)
 				- winwid->im_y) / winwid->old_zoom;
 
 		/* copied from zoom_out, keyevents.c */
-		winwid->zoom = winwid->zoom / opt.zoom_factor;
+		winwid->zoom = winwid->zoom / opt.zoom_rate;
+
+		if (winwid->zoom < ZOOM_MIN)
+			winwid->zoom = ZOOM_MIN;
+
+		/* copied from below (ZOOM, feh_event_handle_MotionNotify) */
+		winwid->im_x = winwid->click_offset_x
+				- (winwid->im_click_offset_x * winwid->zoom);
+		winwid->im_y = winwid->click_offset_y
+				- (winwid->im_click_offset_y * winwid->zoom);
+
+		winwidget_sanitise_offsets(winwid);
+		winwidget_render_image(winwid, 0, 0);
+
+	} else if (feh_is_bb(EVENT_zoomslow_in, button, state)) {
+		D(("ZoomSlow_In Button Press event\n"));
+		D(("click offset is %d,%d\n", ev->xbutton.x, ev->xbutton.y));
+		winwid->click_offset_x = ev->xbutton.x;
+		winwid->click_offset_y = ev->xbutton.y;
+		winwid->old_zoom = winwid->zoom;
+
+		/* required to adjust the image position in zoom mode */
+		winwid->im_click_offset_x = (winwid->click_offset_x
+				- winwid->im_x) / winwid->old_zoom;
+		winwid->im_click_offset_y = (winwid->click_offset_y
+				- winwid->im_y) / winwid->old_zoom;
+
+		/* copied from zoom_in, keyevents.c */
+		winwid->zoom = winwid->zoom * opt.zoomslow_rate;
+
+		if (winwid->zoom > ZOOM_MAX)
+			winwid->zoom = ZOOM_MAX;
+
+		/* copied from below (ZOOM, feh_event_handle_MotionNotify) */
+		winwid->im_x = winwid->click_offset_x
+				- (winwid->im_click_offset_x * winwid->zoom);
+		winwid->im_y = winwid->click_offset_y
+				- (winwid->im_click_offset_y * winwid->zoom);
+
+		winwidget_sanitise_offsets(winwid);
+		winwidget_render_image(winwid, 0, 0);
+
+	} else if (feh_is_bb(EVENT_zoomslow_out, button, state)) {
+		D(("ZoomSlow_Out Button Press event\n"));
+		D(("click offset is %d,%d\n", ev->xbutton.x, ev->xbutton.y));
+		winwid->click_offset_x = ev->xbutton.x;
+		winwid->click_offset_y = ev->xbutton.y;
+		winwid->old_zoom = winwid->zoom;
+
+		/* required to adjust the image position in zoom mode */
+		winwid->im_click_offset_x = (winwid->click_offset_x
+				- winwid->im_x) / winwid->old_zoom;
+		winwid->im_click_offset_y = (winwid->click_offset_y
+				- winwid->im_y) / winwid->old_zoom;
+
+		/* copied from zoom_out, keyevents.c */
+		winwid->zoom = winwid->zoom / opt.zoomslow_rate;
 
 		if (winwid->zoom < ZOOM_MIN)
 			winwid->zoom = ZOOM_MIN;

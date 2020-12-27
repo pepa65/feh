@@ -177,7 +177,9 @@ void init_keyevents(void) {
 	feh_set_kb("action_8"  , 0, XK_8         , 0, XK_KP_8      , 0, 0);
 	feh_set_kb("action_9"  , 0, XK_9         , 0, XK_KP_9      , 0, 0);
 	feh_set_kb("zoom_in"   , 0, XK_Up        , 0, XK_KP_Add    , 0, 0);
-	feh_set_kb("zoom_out"  , 0, XK_Down      , 0, XK_KP_Subtract,0, 0);
+	feh_set_kb("zoom_out"  , 0, XK_Down      , 0, XK_KP_Subtract, 0, 0);
+	feh_set_kb("zoomslow_in", 1, XK_Up, 1, XK_KP_Add, 0, 0);
+	feh_set_kb("zoomslow_out", 1, XK_Down, 1, XK_KP_Subtract, 0, 0);
 	feh_set_kb("zoom_default" , 0, XK_KP_Multiply, 0, XK_asterisk,0, 0);
 	feh_set_kb("zoom_fit"  , 0, XK_KP_Divide , 0, XK_slash     , 0, 0);
 	feh_set_kb("zoom_fill" , 0, XK_exclam    , 0, 0            , 0, 0);
@@ -603,7 +605,7 @@ void feh_event_handle_generic(winwidget winwid, unsigned int state, KeySym keysy
 	}
 	else if (feh_is_kp(EVENT_zoom_in, state, keysym, button)) {
 		winwid->old_zoom = winwid->zoom;
-		winwid->zoom = winwid->zoom * opt.zoom_factor;
+		winwid->zoom = winwid->zoom * opt.zoom_rate;
 
 		if (winwid->zoom > ZOOM_MAX)
 			winwid->zoom = ZOOM_MAX;
@@ -617,7 +619,35 @@ void feh_event_handle_generic(winwidget winwid, unsigned int state, KeySym keysy
 	}
 	else if (feh_is_kp(EVENT_zoom_out, state, keysym, button)) {
 		winwid->old_zoom = winwid->zoom;
-		winwid->zoom = winwid->zoom / opt.zoom_factor;
+		winwid->zoom = winwid->zoom / opt.zoom_rate;
+
+		if (winwid->zoom < ZOOM_MIN)
+			winwid->zoom = ZOOM_MIN;
+
+		winwid->im_x = (winwid->w / 2) - (((winwid->w / 2) - winwid->im_x) /
+			winwid->old_zoom * winwid->zoom);
+		winwid->im_y = (winwid->h / 2) - (((winwid->h / 2) - winwid->im_y) /
+			winwid->old_zoom * winwid->zoom);
+		winwidget_sanitise_offsets(winwid);
+		winwidget_render_image(winwid, 0, 0);
+	}
+	else if (feh_is_kp(EVENT_zoomslow_in, state, keysym, button)) {
+		winwid->old_zoom = winwid->zoom;
+		winwid->zoom = winwid->zoom * opt.zoomslow_rate;
+
+		if (winwid->zoom > ZOOM_MAX)
+			winwid->zoom = ZOOM_MAX;
+
+		winwid->im_x = (winwid->w / 2) - (((winwid->w / 2) - winwid->im_x) /
+			winwid->old_zoom * winwid->zoom);
+		winwid->im_y = (winwid->h / 2) - (((winwid->h / 2) - winwid->im_y) /
+			winwid->old_zoom * winwid->zoom);
+		winwidget_sanitise_offsets(winwid);
+		winwidget_render_image(winwid, 0, 0);
+	}
+	else if (feh_is_kp(EVENT_zoomslow_out, state, keysym, button)) {
+		winwid->old_zoom = winwid->zoom;
+		winwid->zoom = winwid->zoom / opt.zoomslow_rate;
 
 		if (winwid->zoom < ZOOM_MIN)
 			winwid->zoom = ZOOM_MIN;

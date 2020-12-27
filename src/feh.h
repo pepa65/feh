@@ -120,7 +120,8 @@ enum slide_change { SLIDE_NEXT, SLIDE_PREV, SLIDE_RAND, SLIDE_FIRST, SLIDE_LAST,
 
 #define ZOOM_MIN 0.002
 #define ZOOM_MAX 2000
-#define ZOOM_FACTOR 1.25
+#define ZOOM_RATE 1.25
+#define ZOOMSLOW_RATE 1.01
 
 typedef void (*sighandler_t) (int);
 

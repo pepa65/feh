@@ -127,7 +127,8 @@ struct __fehoptions {
 	int offset_y;
 	int default_zoom;
 	int zoom_mode;
-	double zoom_factor;
+	double zoom_rate;
+	double zoomslow_rate;
 	unsigned char adjust_reload;
 	int xinerama_index;
 	char *x11_class;
@@ -198,6 +199,8 @@ enum key_action {
 	EVENT_action_9,
 	EVENT_zoom_in,
 	EVENT_zoom_out,
+	EVENT_zoomslow_in,
+	EVENT_zoomslow_out,
 	EVENT_zoom_default,
 	EVENT_zoom_fit,
 	EVENT_zoom_fill,

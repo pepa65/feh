@@ -967,11 +967,17 @@ zoom the image like the
 .Cm --bg-fill
 mode.
 .
-.It Cm --zoom-factor Ar float
+.It Cm --zoom-rate Ar float
 .
-When zooming in or out, the current zoom ratio gets multiplied or divided by
+When zooming in or out, the zoom ratio gets multiplied or divided by
 .Ar float
-.Pq greater than 1, the default is 1.25
+.Pq greater than 1, the default is $ZOOM_RATE$
+.
+.It Cm --zoomslow-rate Ar float
+.
+When zooming in or out slowly, the zoom ratio gets multiplied or divided by
+.Ar float
+.Pq greater than 1, the default is $ZOOMSLOW_RATE$
 .
 .El
 .
