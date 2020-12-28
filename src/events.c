@@ -105,10 +105,10 @@ void init_buttonbindings(void)
 	feh_set_bb(EVENT_pan,         0, 1);
 	feh_set_bb(EVENT_zoom,        0, 2);
 	feh_set_bb(EVENT_toggle_menu, 0, 3);
-	feh_set_bb(EVENT_zoom_out,    0, 4);
-	feh_set_bb(EVENT_zoom_in,     0, 5);
-	feh_set_bb(EVENT_zoomslow_out, 1, 4);
-	feh_set_bb(EVENT_zoomslow_in, 1, 5);
+	feh_set_bb(EVENT_zoom_in,     0, 4);
+	feh_set_bb(EVENT_zoom_out,    0, 5);
+	feh_set_bb(EVENT_zoomslow_in, 1, 4);
+	feh_set_bb(EVENT_zoomslow_out, 1, 5);
 	feh_set_bb(EVENT_blur,        4, 1);
 	feh_set_bb(EVENT_rotate,      4, 2);
 
