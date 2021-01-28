@@ -435,8 +435,9 @@ static void feh_parse_option_array(int argc, char **argv, int finalrun)
 #endif
 		{"class"         , 1, 0, 249},
 		{"no-conversion-cache", 0, 0, 250},
-		{"zoom-rate"     , 1, 0, 251},
-		{"zoomslow-rate" , 1, 0, 252},
+		{"window-id"     , 1, 0, 251},
+		{"zoom-rate"     , 1, 0, 252},
+		{"zoomslow-rate" , 1, 0, 253},
 		{0, 0, 0, 0}
 	};
 	int optch = 0, cmdx = 0;
@@ -838,6 +839,9 @@ static void feh_parse_option_array(int argc, char **argv, int finalrun)
 			opt.use_conversion_cache = 0;
 			break;
 		case 251:
+			opt.x11_windowid = atol(optarg);
+			break;
+		case 252:
 			opt.zoom_rate = atof(optarg);
 			if (opt.zoom_rate <= 1) {
 				weprintf("The zoom-rate must be greater than 1 (default of %f used)",
@@ -845,7 +849,7 @@ static void feh_parse_option_array(int argc, char **argv, int finalrun)
 				opt.zoom_rate = ZOOM_RATE;
 			}
 			break;
-		case 252:
+		case 253:
 			opt.zoomslow_rate = atof(optarg);
 			if (opt.zoomslow_rate <= 1) {
 				weprintf("The zoomslow-rate must be greater than 1 (default of %f used)",
@@ -875,11 +879,26 @@ static void feh_parse_option_array(int argc, char **argv, int finalrun)
 		 */
 		if (opt.start_list_at && path_is_url(opt.start_list_at) && (strlen(opt.start_list_at) <= 8 || strncmp(opt.start_list_at, "file:///", 8) != 0)) {
 			add_file_to_filelist_recursively(opt.start_list_at, FILELIST_FIRST);
+		/*
+		 * Otherwise, make "feh --start-at dir/file.jpg" behave like
+		 * "feh --start-at dir/file.jpg dir".
+		 */
 		} else if (opt.start_list_at && strrchr(opt.start_list_at, '/')) {
+			/*
+			 * feh can't candle urlencoded path components ("some%20dir" etc).
+			 * Use libcurl to unescape them if --start-at is file://...
+			 */
 			if (strlen(opt.start_list_at) > 8 && strncmp(opt.start_list_at, "file:///", 8) == 0) {
-				char *start_at_path = estrdup(opt.start_list_at + 7);
-				free(opt.start_list_at);
-				opt.start_list_at = start_at_path;
+				char *unescaped_path = feh_http_unescape(opt.start_list_at);
+				if (unescaped_path != NULL) {
+					free(opt.start_list_at);
+					opt.start_list_at = estrdup(unescaped_path + 7);
+					free(unescaped_path);
+				} else {
+					char *new_path = estrdup(opt.start_list_at + 7);
+					free(opt.start_list_at);
+					opt.start_list_at = new_path;
+				}
 			}
 			char *target_directory = estrdup(opt.start_list_at);
 			char *filename_start = strrchr(target_directory, '/');

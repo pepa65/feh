@@ -1,3 +1,17 @@
+Mon, 25 Jan 2021 17:46:57 +0100  Daniel Friesel <derf+feh@finalrewind.org>
+
+* Release v3.6.3
+    * Fix --start-at not handling URL-encoded file:/// paths properly. Notably,
+      this also fixes feh not displaying images with spaces or unicode
+      elements in their path when opened from a file manager.
+
+Sat, 09 Jan 2021 12:28:06 +0100  Daniel Friesel <derf+feh@finalrewind.org>
+
+* Release v3.6.2
+    * Fix save_filelist not respecting --output-dir
+    * Fix file descriptor leak when attempting to load truncated image files.
+      The issue was introduced in v3.6.
+
 Sun, 06 Dec 2020 08:34:15 +0100  Daniel Friesel <derf+feh@finalrewind.org>
 
 * Release v3.6.1

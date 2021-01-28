@@ -57,6 +57,7 @@ void init_slideshow_mode(void)
 	// Try finding an exact filename match first
 	for (; l && opt.start_list_at; l = l->next) {
 		if (!strcmp(opt.start_list_at, FEH_FILE(l->data)->filename)) {
+			free(opt.start_list_at);
 			opt.start_list_at = NULL;
 			break;
 		}
@@ -83,6 +84,7 @@ void init_slideshow_mode(void)
 				current_filename = FEH_FILE(l->data)->filename;
 			}
 			if (!strcmp(start_at_filename, current_filename)) {
+				free(opt.start_list_at);
 				opt.start_list_at = NULL;
 				break;
 			}
@@ -638,7 +640,7 @@ void slideshow_save_image(winwidget win)
 	gib_imlib_save_image_with_error_return(win->im, tmpname, &err);
 
 	if (err)
-		feh_imlib_print_load_error(tmpname, win, err);
+		feh_print_load_error(tmpname, win, err, LOAD_ERROR_IMLIB);
 
 	free(tmpname);
 	return;
